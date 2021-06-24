@@ -9,6 +9,7 @@ import MetricsResponse from '../../models/metricsResponse';
 import {getMetricsStart} from '../../store/crypto/actions';
 import {CryptoState} from '../../store/crypto/types';
 import {formatNumber} from '../../utils/common';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'CryptoList'>;
 
@@ -77,6 +78,7 @@ const CryptoList: React.FC<Props> = ({navigation, ...props}) => {
     <View style={s.screen}>
       {isLoading && <ActivityIndicator />}
       {callError && <Text>{callError}</Text>}
+      <Icon name="north-east" color="black" />
       <FlatList
         data={data}
         renderItem={renderItem}
