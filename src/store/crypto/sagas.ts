@@ -7,16 +7,14 @@ import {
   getMetricsSuccess,
   setMetricsLoading,
 } from './actions';
-import {GET_METRICS_LIST} from './types';
+import {GetMetricsAction, GET_METRICS_LIST} from './types';
 
-export function* getMetricsSaga(): Generator<
-  StrictEffect,
-  void,
-  MetricsResponse
-> {
+export function* getMetricsSaga(
+  action: GetMetricsAction,
+): Generator<StrictEffect, void, MetricsResponse[]> {
   try {
     yield put(setMetricsLoading(true));
-    const result = yield call(getMetricsList);
+    const result = yield call(getMetricsList, action.payload);
     yield put(getMetricsSuccess(result));
   } catch (error) {
     const {errorResponse}: {errorResponse: AxiosResponse} = error;
