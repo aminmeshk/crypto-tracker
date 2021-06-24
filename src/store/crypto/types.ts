@@ -3,7 +3,7 @@ import MetricsResponse from '../../models/metricsResponse';
 
 export interface CryptoState {
   cryptoMetrics: {
-    cachedData: MetricsResponse | null;
+    cachedData: MetricsResponse[] | null;
     fetchInProgress: boolean;
     error: AxiosResponse | null;
   };
@@ -14,8 +14,9 @@ export const GET_METRICS_LIST_FAILED = 'api/metrics/getList/failed';
 export const GET_METRICS_LIST_SUCCESS = 'api/metrics/getList/success';
 export const GET_METRICS_LIST_SET_LOADING = 'api/metrics/getList/loading';
 
-interface GetMetricsAction {
+export interface GetMetricsAction {
   type: typeof GET_METRICS_LIST;
+  payload: string[];
 }
 
 interface GetMetricsFailedAction {
@@ -25,7 +26,7 @@ interface GetMetricsFailedAction {
 
 interface GetMetricsSuccessAction {
   type: typeof GET_METRICS_LIST_SUCCESS;
-  payload: MetricsResponse;
+  payload: MetricsResponse[];
 }
 
 interface GetMetricsSetLoadingAction {
