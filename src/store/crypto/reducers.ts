@@ -1,9 +1,11 @@
 import {
+  ADD_CRYPTO,
   CryptoActionTypes,
   CryptoState,
   GET_METRICS_LIST_FAILED,
   GET_METRICS_LIST_SET_LOADING,
   GET_METRICS_LIST_SUCCESS,
+  REMOVE_CRYPTO,
 } from './types';
 
 const initialCryptoState: CryptoState = {
@@ -12,6 +14,7 @@ const initialCryptoState: CryptoState = {
     cachedData: null,
     error: null,
   },
+  filteredCryptos: [],
 };
 
 export const cryptoReducer = (
@@ -47,6 +50,27 @@ export const cryptoReducer = (
           fetchInProgress: false,
           error: action.payload,
         },
+      };
+    }
+    case ADD_CRYPTO: {
+      const newFiltered = [...state.filteredCryptos];
+      if (!newFiltered.includes(action.payload)) {
+        newFiltered.push(action.payload);
+      }
+      return {
+        ...state,
+        filteredCryptos: newFiltered,
+      };
+    }
+    case REMOVE_CRYPTO: {
+      const newFiltered = [...state.filteredCryptos];
+      const idx = newFiltered.indexOf(action.payload.toLowerCase());
+      if (idx >= 0) {
+        newFiltered.splice(idx, 1);
+      }
+      return {
+        ...state,
+        filteredCryptos: newFiltered,
       };
     }
     default: {

@@ -1,21 +1,16 @@
 import {StackNavigationProp} from '@react-navigation/stack';
 import React, {useCallback, useEffect} from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  ListRenderItemInfo,
-  StatusBar,
-} from 'react-native';
+import {Alert, ListRenderItemInfo, StatusBar} from 'react-native';
 import {FlatList} from 'react-native';
-import {View, Text, StyleSheet, Button} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootStackParamList} from '../../helpers/navigation';
 import MetricsResponse from '../../models/metricsResponse';
-import {getMetricsStart} from '../../store/crypto/actions';
+import {getMetricsStart, removeCrypto} from '../../store/crypto/actions';
 import {CryptoState} from '../../store/crypto/types';
 import {formatNumber} from '../../utils/common';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'CryptoList'>;
@@ -24,7 +19,7 @@ interface Props {
   navigation: NavigationProp;
 }
 
-const CryptoList: React.FC<Props> = ({navigation, ...props}) => {
+const CryptoList: React.FC<Props> = ({navigation}) => {
   const data = useSelector(
     (state: CryptoState) => state.cryptoMetrics.cachedData,
   );
@@ -34,17 +29,22 @@ const CryptoList: React.FC<Props> = ({navigation, ...props}) => {
   const callError = useSelector(
     (state: CryptoState) => state.cryptoMetrics.error,
   );
+  const filteredCryptos = useSelector(
+    (state: CryptoState) => state.filteredCryptos,
+  );
+  console.log('filteredCryptos: ', JSON.stringify(filteredCryptos));
+
   const insets = useSafeAreaInsets();
 
   const dispatch = useDispatch();
 
   const callApi = useCallback(() => {
-    dispatch(getMetricsStart(['BTC', 'LTC', 'ETH', 'XRP']));
-  }, [dispatch]);
+    dispatch(getMetricsStart(filteredCryptos));
+  }, [dispatch, filteredCryptos]);
 
   useEffect(() => {
     callApi();
-  }, [callApi]);
+  }, [callApi, filteredCryptos]);
 
   useEffect(() => {
     if (data) {
@@ -54,9 +54,9 @@ const CryptoList: React.FC<Props> = ({navigation, ...props}) => {
 
   const removeItem = useCallback(
     (item: ListRenderItemInfo<MetricsResponse>) => {
-      console.log('remove item: ', item.item.data.symbol);
+      dispatch(removeCrypto(item.item.data.symbol));
     },
-    [],
+    [dispatch],
   );
 
   const promptRemove = useCallback(
@@ -117,6 +117,12 @@ const CryptoList: React.FC<Props> = ({navigation, ...props}) => {
     );
   };
 
+  const emptyComponent = (
+    <Text style={s.emptyText}>
+      Please add a Cryptocurrency using the button below
+    </Text>
+  );
+
   return (
     <View style={[s.screen, {paddingBottom: insets.bottom}]}>
       <StatusBar barStyle="light-content" />
@@ -129,6 +135,15 @@ const CryptoList: React.FC<Props> = ({navigation, ...props}) => {
         contentContainerStyle={s.listContainer}
         refreshing={isLoading}
         onRefresh={callApi}
+        ListEmptyComponent={emptyComponent}
+        ListFooterComponent={
+          data && data.length > 0 ? (
+            <Text style={s.emptyText}>
+              You can refresh the list by swiping down, and remove an item by
+              long pressing
+            </Text>
+          ) : null
+        }
       />
       <TouchableOpacity
         style={s.addTouchable}
@@ -204,6 +219,13 @@ const s = StyleSheet.create({
   },
   addTouchable: {
     marginBottom: 16,
+  },
+  emptyText: {
+    width: '80%',
+    color: 'gray',
+    textAlign: 'center',
+    alignSelf: 'center',
+    marginTop: 16,
   },
 });
 

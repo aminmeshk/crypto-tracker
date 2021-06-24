@@ -7,12 +7,15 @@ export interface CryptoState {
     fetchInProgress: boolean;
     error: AxiosResponse | null;
   };
+  filteredCryptos: string[];
 }
 
 export const GET_METRICS_LIST = 'api/metrics/getList/start';
 export const GET_METRICS_LIST_FAILED = 'api/metrics/getList/failed';
 export const GET_METRICS_LIST_SUCCESS = 'api/metrics/getList/success';
 export const GET_METRICS_LIST_SET_LOADING = 'api/metrics/getList/loading';
+export const ADD_CRYPTO = 'local/crypto/add';
+export const REMOVE_CRYPTO = 'local/crypto/remove';
 
 export interface GetMetricsAction {
   type: typeof GET_METRICS_LIST;
@@ -34,8 +37,20 @@ interface GetMetricsSetLoadingAction {
   payload: boolean;
 }
 
+interface AddCryptoAction {
+  type: typeof ADD_CRYPTO;
+  payload: string;
+}
+
+interface RemoveCryptoAction {
+  type: typeof REMOVE_CRYPTO;
+  payload: string;
+}
+
 export type CryptoActionTypes =
   | GetMetricsAction
   | GetMetricsFailedAction
   | GetMetricsSuccessAction
-  | GetMetricsSetLoadingAction;
+  | GetMetricsSetLoadingAction
+  | AddCryptoAction
+  | RemoveCryptoAction;
