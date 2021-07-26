@@ -64,7 +64,7 @@ export const cryptoReducer = (
     }
     case REMOVE_CRYPTO: {
       const newFiltered = [...state.filteredCryptos];
-      const idx = newFiltered.indexOf(action.payload.toLowerCase());
+      const idx = newFiltered.indexOf(action.payload);
       if (idx >= 0) {
         newFiltered.splice(idx, 1);
       }

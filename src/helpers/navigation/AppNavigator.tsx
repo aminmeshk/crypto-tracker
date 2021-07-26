@@ -1,6 +1,6 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {CryptoAddScreen, CryptoListScreen} from '../../screens';
+import {CryptoAddScreen, CryptoListScreen, ProfileScreen} from '../../screens';
 import {RootStackParamList} from './types';
 import {Image, Platform, StyleSheet} from 'react-native';
 
@@ -24,12 +24,6 @@ export const RootStackScreen: React.FC = () => (
       name="CryptoList"
       options={{
         title: 'CryptoTracker Pro',
-        headerRight: () => (
-          <Image
-            source={require('../../../assets/images/avatar.jpg')}
-            style={s.avatarImage}
-          />
-        ),
       }}
     />
     <Stack.Screen
@@ -40,15 +34,13 @@ export const RootStackScreen: React.FC = () => (
         headerTitleAlign: Platform.OS === 'ios' ? 'center' : 'left',
       }}
     />
+    <Stack.Screen
+      component={ProfileScreen}
+      name="Profile"
+      options={{
+        title: 'Profile',
+        headerTitleAlign: Platform.OS === 'ios' ? 'center' : 'left',
+      }}
+    />
   </Stack.Navigator>
 );
-
-const s = StyleSheet.create({
-  avatarImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 40 / 2,
-    marginRight: 16,
-    marginBottom: 6,
-  },
-});

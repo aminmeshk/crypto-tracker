@@ -1,6 +1,6 @@
 import {StackNavigationProp} from '@react-navigation/stack';
-import React, {useCallback, useEffect} from 'react';
-import {Alert, ListRenderItemInfo, StatusBar} from 'react-native';
+import React, {useCallback, useEffect, useLayoutEffect} from 'react';
+import {Alert, Image, ListRenderItemInfo, StatusBar} from 'react-native';
 import {FlatList} from 'react-native';
 import {View, Text, StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -8,10 +8,11 @@ import {RootStackParamList} from '../../helpers/navigation';
 import MetricsResponse from '../../models/metricsResponse';
 import {getMetricsStart, removeCrypto} from '../../store/crypto/actions';
 import {CryptoState} from '../../store/crypto/types';
-import {formatNumber} from '../../utils/common';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import ListItem from './components/ListItem';
+import ProfileImage from '../../components/ProfileImage';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'CryptoList'>;
 
@@ -32,6 +33,15 @@ const CryptoList: React.FC<Props> = ({navigation}) => {
   const filteredCryptos = useSelector(
     (state: CryptoState) => state.filteredCryptos,
   );
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <ProfileImage onPress={() => navigation.navigate('Profile')} />
+      ),
+    });
+  }, [navigation]);
+
   console.log('filteredCryptos: ', JSON.stringify(filteredCryptos));
 
   const insets = useSafeAreaInsets();
@@ -83,39 +93,9 @@ const CryptoList: React.FC<Props> = ({navigation}) => {
     [removeItem],
   );
 
-  const renderItem = (item: ListRenderItemInfo<MetricsResponse>) => {
-    const isUp =
-      item.item.data.market_data.percent_change_usd_last_24_hours > 0;
-    return (
-      <TouchableOpacity
-        onLongPress={() => promptRemove(item)}
-        activeOpacity={0.5}>
-        <View>
-          <View style={s.row}>
-            <View style={s.nameContainer}>
-              <Text style={s.name}>{item.item.data.name}</Text>
-              <Text style={s.symbol}>{item.item.data.symbol}</Text>
-            </View>
-            <View style={s.priceContainer}>
-              <Text style={s.name}>
-                {'$' + formatNumber(item.item.data.market_data.price_usd)}
-              </Text>
-              <Text style={[s.symbol, isUp ? s.green : s.red]}>
-                <Icon
-                  name={isUp ? 'north-east' : 'south-west'}
-                  color={isUp ? 'darkgreen' : 'darkred'}
-                />
-                {formatNumber(
-                  item.item.data.market_data.percent_change_usd_last_24_hours,
-                ) + '%'}
-              </Text>
-            </View>
-          </View>
-          <View style={s.seperator} />
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  const renderItem = (item: ListRenderItemInfo<MetricsResponse>) => (
+    <ListItem item={item} onLongPress={promptRemove} />
+  );
 
   const emptyComponent = (
     <Text style={s.emptyText}>
@@ -162,10 +142,6 @@ const s = StyleSheet.create({
     flex: 1,
     // justifyContent: 'center',
   },
-  seperator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#aaa',
-  },
   flatList: {
     // borderColor: 'red',
     // borderWidth: 1,
@@ -174,36 +150,6 @@ const s = StyleSheet.create({
   listContainer: {
     paddingHorizontal: 16,
     paddingVertical: 6,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-  },
-  nameContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-  },
-  priceContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 3,
-  },
-  symbol: {
-    color: '#666',
-  },
-  green: {
-    color: 'green',
-  },
-  red: {
-    color: 'crimson',
   },
   addText: {
     color: '#3b5675',
