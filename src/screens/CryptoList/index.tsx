@@ -147,6 +147,14 @@ const CryptoList: React.FC<Props> = ({navigation}) => {
       />
       <TouchableOpacity
         style={s.addTouchable}
+        onPress={() => navigation.navigate('HtmlToImg')}>
+        <View style={s.buttonWrapper}>
+          <Icon name="add" color="#3b5675" style={s.addIcon} />
+          <Text style={s.addText}>HTML to Image</Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={s.addTouchable}
         onPress={() => navigation.navigate('CryptoAdd')}>
         <View style={s.buttonWrapper}>
           <Icon name="add" color="#3b5675" style={s.addIcon} />

@@ -1,6 +1,10 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {CryptoAddScreen, CryptoListScreen} from '../../screens';
+import {
+  CryptoAddScreen,
+  CryptoListScreen,
+  HtmlToImgScreen,
+} from '../../screens';
 import {RootStackParamList} from './types';
 import {Image, Platform, StyleSheet} from 'react-native';
 
@@ -37,6 +41,14 @@ export const RootStackScreen: React.FC = () => (
       name="CryptoAdd"
       options={{
         title: 'Add a cryptocurrency',
+        headerTitleAlign: Platform.OS === 'ios' ? 'center' : 'left',
+      }}
+    />
+    <Stack.Screen
+      component={HtmlToImgScreen}
+      name="HtmlToImg"
+      options={{
+        title: 'Convert HTML to Image',
         headerTitleAlign: Platform.OS === 'ios' ? 'center' : 'left',
       }}
     />
